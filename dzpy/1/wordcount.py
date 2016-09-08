@@ -41,7 +41,6 @@ def read_words(filename):
 def solve(filename):
     words = read_words(filename)
     words.sort()
-    
     ret = []
     i = 0
     while i < len(words):
@@ -51,7 +50,6 @@ def solve(filename):
             count += 1
         ret.append((words[i], count))
         i += 1
-    
     return ret    
 
 def second(pair):

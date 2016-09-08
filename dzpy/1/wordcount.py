@@ -32,12 +32,44 @@ print_words() and print_top().
 import sys
 
 def read_words(filename):
-    words = []
+    words = []  
     with open(filename, "r") as f:
         for line in f:
             words.extend(line.split())
     return words
 
+def solve(filename):
+    words = read_words(filename)
+    words.sort()
+    
+    ret = []
+    i = 0
+    while i < len(words):
+        count = 1
+        while i < len(words) - 1 and words[i + 1] == words[i]:
+            i += 1
+            count += 1
+        ret.append((words[i], count))
+        i += 1
+    
+    return ret    
+
+def second(pair):
+    return pair[1]
+    
+def print_words(filename):
+    ans = solve(filename)
+    ans.sort()
+    for i in ans:
+        print(i[0], i[1])
+
+def print_top(filename):
+    ans = solve(filename)
+    ans.sort(key=second, reverse=True)
+    for i in ans[:20]:
+        print(i[0])
+    return
+    
 # Define print_words(filename) and print_top(filename) functions.
 # You could write a helper utility function that reads a file
 # and builds and returns a word/count dict for it.

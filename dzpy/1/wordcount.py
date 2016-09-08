@@ -65,7 +65,7 @@ def print_words(filename):
 
 def print_top(filename):
     ans = solve(filename)
-    ans.sort(key=second, reverse=True)
+    ans.sort(key = second, reverse = True)
     for i in ans[:20]:
         print(i[0])
     return

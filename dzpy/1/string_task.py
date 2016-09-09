@@ -41,5 +41,9 @@ def not_bad(s):
 #
 # Example input: 'abcd', 'xy'
 # Example output: 'abxcdy'
+
+def middle(a):
+    return (len(a) + 1) // 2
+
 def front_back(a, b):
-    return a[:(len(a) + 1) // 2] + b[:(len(b) + 1) // 2] + a[(len(a) + 1) // 2:] + b[(len(b) + 1) // 2:]
+    return a[:middle(a)] + b[:middle(b)] + a[middle(a):] + b[middle(b):]

@@ -35,6 +35,7 @@ def read_words(filename):
     words = []  
     with open(filename, "r") as f:
         for line in f:
+            line = line.lower()
             words.extend(line.split())
     return words
 
@@ -60,14 +61,14 @@ def second(pair):
 def print_words(filename):
     ans = solve(filename)
     ans.sort()
-    for i in ans:
-        print(i[0], i[1])
+    for words, count in ans:
+        print(words, count)
 
 def print_top(filename):
     ans = solve(filename)
     ans.sort(key = second, reverse = True)
-    for i in ans[:20]:
-        print(i[0])
+    for words, count in ans[:20]:
+        print(words)
     return
     
 # Define print_words(filename) and print_top(filename) functions.

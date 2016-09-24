@@ -22,7 +22,8 @@ def find_duplicates(path):
     files = []
     for directory, b, files_list in os.walk(path):
         for f in files_list:
-            files.append((directory, f))
+            if not os.path.islink(os.path.join(directory, f)) and f[0] != '.' and f[0] != '~':
+                files.append((directory, f))
 
     d = collections.defaultdict(list)
     for d1, f1 in files:

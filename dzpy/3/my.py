@@ -1,21 +1,14 @@
 import numpy as np
+import sys
 
-
-def reading(n):
-    n1 = n
-    while n1 & (n1 - 1):
-        n1 += 1
-
-    a = np.zeros((n1, n1), np.int64)
-    for i in range(len(a)):
-        for g in range(len(a)):
-            if g >= n or i >= n:
-                a[i][g] = 0
-            else:
-                a[i][g] = np.int64(input())
-    return a
-
-
+def making(a1, n):
+    a = np.zeros((n, n), np.int)
+    n1 = len(a1)
+    for i in range(n1):
+        for g in range(n1):
+            a[i][g] = a1[i][g]
+    return a            
+            
 def m_parsing(a, n):
     middle = n // 2
     a11 = a[:middle, :middle]
@@ -23,8 +16,8 @@ def m_parsing(a, n):
     a21 = a[middle:, :middle]
     a22 = a[middle:, middle:]
     return (a11, a12, a21, a22)
-
-
+    
+    
 def m_mul(a, b):
     n = len(a)
 
@@ -42,7 +35,7 @@ def m_mul(a, b):
     p6 = m_mul(a21 - a11, b11 + b12)
     p7 = m_mul(a12 - a22, b21 + b22)
 
-    c = np.zeros((n, n), np.int64)
+    c = np.zeros((n, n), np.int)
     middle = n // 2
     c[:middle, :middle] = p1 + p4 - p5 + p7
     c[:middle, middle:] = p3 + p5
@@ -54,10 +47,14 @@ def m_mul(a, b):
 
 def strassen():
     n1 = int(input())
-    a = reading(n1)
-    b = reading(n1)
-    n = len(a)
+    reads = np.loadtxt(sys.stdin, dtype=np.int, ndmin=2, skiprows=0)
+    n = n1
+    while n & (n - 1):
+        n += 1
 
+    a = making(reads[:n1, :n1], n)
+    b = making(reads[n1:, :n1], n)
+        
     c = m_mul(a, b)
 
     for i in range(n1):

@@ -1,14 +1,16 @@
 import numpy as np
 import sys
 
+
 def making(a1, n):
     a = np.zeros((n, n), np.int)
     n1 = len(a1)
     for i in range(n1):
         for g in range(n1):
             a[i][g] = a1[i][g]
-    return a            
-            
+    return a
+
+
 def m_parsing(a, n):
     middle = n // 2
     a11 = a[:middle, :middle]
@@ -16,8 +18,8 @@ def m_parsing(a, n):
     a21 = a[middle:, :middle]
     a22 = a[middle:, middle:]
     return (a11, a12, a21, a22)
-    
-    
+
+
 def m_mul(a, b):
     n = len(a)
 
@@ -54,7 +56,7 @@ def strassen():
 
     a = making(reads[:n1, :n1], n)
     b = making(reads[n1:, :n1], n)
-        
+
     c = m_mul(a, b)
 
     for i in range(n1):

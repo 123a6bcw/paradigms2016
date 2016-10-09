@@ -3,15 +3,16 @@
 
 class Scope:
     items = dict()
-    def __init__(self, parent = None):
+
+    def __init__(self, parent=None):
         self.parent = parent
-  
+
     def __getitem__(self, item):
-        if item in self.items:  
-            return self.items[item] 
+        if item in self.items:
+            return self.items[item]
         elif self.parent:
             return self.parent.items[item]
-  
+
     def __setitem__(self, item, value):
         self.items[item] = value
 
@@ -28,11 +29,11 @@ class Function:
     def __init__(self, args, body):
         self.args = args
         self.body = body
-        
+
     def evaluate(self, scope):
         ret = Number(0)
         for expr in self.body:
-             ret = expr.evaluate(scope)
+            ret = expr.evaluate(scope)
         return ret
 
 
@@ -47,11 +48,11 @@ class FunctionDefinition:
 
 
 class Conditional:
-    def __init__(self, condition, if_true, if_false = None):
+    def __init__(self, condition, if_true, if_false=None):
         self.condition = condition
         self.if_true = if_true
         self.if_false = if_false
-        
+
     def evaluate(self, scope):
         ret = Number(0)
         if self.condition.evaluate(scope).value:
@@ -60,16 +61,16 @@ class Conditional:
         else:
             for expr in self.if_false:
                 ret = expr.evaluate(scope)
-        return ret;
+        return ret
 
 
-class Print:  
+class Print:
     def __init__(self, expr):
         self.expr = expr
 
     def evaluate(self, scope):
         expr = self.expr.evaluate(scope).value
-        print (expr)
+        print(expr)
         return expr
 
 
@@ -95,7 +96,7 @@ class FunctionCall:
             call_scope_items.append(arg.evaluate(scope))
         call_scope = Scope(scope)
         for i, arg_name in enumerate(function.args):
-             call_scope[arg_name] = call_scope_items[i]
+            call_scope[arg_name] = call_scope_items[i]
         return function.evaluate(call_scope)
 
 
@@ -172,35 +173,37 @@ def example():
     FunctionCall(FunctionDefinition('foo', parent['foo']),
                  [Number(5), UnaryOperation('-', Number(3))]).evaluate(scope)
 
+
 def my_tests():
     global_scope = Scope()
     print("It should print (abs(x) + 1) ^ 2 if abs(x) is odd, else x:")
-    print("Write x:", end = ' ')
-    Read("x").evaluate(global_scope) 
-    global_scope["foo"] = Function(["a", "b", "c"], [BinaryOperation(BinaryOperation(Reference("a"), "+", Reference("b")), "*", Reference("c"))])
+    print("Write x:", end=' ')
+    Read("x").evaluate(global_scope)
+    global_scope["foo"] = Function(["a", "b", "c"],
+                                   [BinaryOperation(BinaryOperation(Reference("a"), "+", Reference("b")), "*", Reference("c"))])
     Reference_to_foo = FunctionDefinition("foo", global_scope["foo"])
     global_scope["abs"] = Function(["x"], [
                                             Conditional(
                                                 BinaryOperation(Reference("x"), "<", Number(0)), [UnaryOperation("-", Reference("x"))], [Reference("x")])
                                           ])
     Reference_to_abs = FunctionDefinition("abs", global_scope["abs"])
-    
+
     x = Reference("x").evaluate(global_scope).value
-    
+
     if (abs(x) % 2 == 1):
-        print("It should print", (abs(Reference("x").evaluate(global_scope).value) + 1) * (abs(Reference("x").evaluate(global_scope).value) + 1), ": ", end = ' ')
+        print("It should print", (abs(Reference("x").evaluate(global_scope).value) + 1) * (abs(Reference("x").evaluate(global_scope).value) + 1), ": ", end=' ')
     else:
-        print("It should print", x, ":", end = ' ')
-        
+        print("It should print", x, ":", end=' ')
+
     Conditional(
-        UnaryOperation("!", BinaryOperation(BinaryOperation(BinaryOperation(Reference("x"), "/", Number(2)), "*", Number(2)), "==", Reference("x"))), 
+        UnaryOperation("!", BinaryOperation(BinaryOperation(BinaryOperation(Reference("x"), "/", Number(2)), "*", Number(2)), "==", Reference("x"))),
         [
             Print(FunctionCall(Reference_to_foo, [FunctionCall(Reference_to_abs, [Reference("x")]), Number(1), BinaryOperation(FunctionCall(Reference_to_abs, [Reference("x")]), "+", Number(1))]))
         ],
         [
             Print(Reference("x"))
         ]).evaluate(global_scope)
-    
+
 
 if __name__ == '__main__':
     example()

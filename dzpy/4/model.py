@@ -2,9 +2,8 @@
 
 
 class Scope:
-    items = dict()
-
     def __init__(self, parent=None):
+        self.items = dict()
         self.parent = parent
 
     def __getitem__(self, item):
@@ -117,31 +116,31 @@ class BinaryOperation:
     def evaluate(self, scope):
         lhs = self.lhs.evaluate(scope).value
         rhs = self.rhs.evaluate(scope).value
-        if (self.op == "+"):
+        if self.op == "+":
             return Number(lhs + rhs)
-        if (self.op == "-"):
+        if self.op == "-":
             return Number(lhs - rhs)
-        if (self.op == "*"):
+        if self.op == "*":
             return Number(lhs * rhs)
-        if (self.op == "/"):
+        if self.op == "/":
             return Number(lhs // rhs)
-        if (self.op == "%"):
+        if self.op == "%":
             return Number(lhs % rhs)
-        if (self.op == "=="):
+        if self.op == "==":
             return Number(lhs == rhs)
-        if (self.op == "!="):
+        if self.op == "!=":
             return Number(lhs != rhs)
-        if (self.op == "<"):
+        if self.op == "<":
             return Number(lhs < rhs)
-        if (self.op == ">"):
+        if self.op == ">":
             return Number(lhs > rhs)
-        if (self.op == "<="):
+        if self.op == "<=":
             return Number(lhs <= rhs)
-        if (self.op == ">="):
+        if self.op == ">=":
             return Number(lhs >= rhs)
-        if (self.op == "&&"):
+        if self.op == "&&":
             return Number(lhs and rhs)
-        if (self.op == "||"):
+        if self.op == "||":
             return Number(lhs or rhs)
 
 
@@ -152,9 +151,9 @@ class UnaryOperation:
 
     def evaluate(self, scope):
         expr = self.expr.evaluate(scope).value
-        if (self.op == "-"):
+        if self.op == "-":
             return Number(-expr)
-        if (self.op == "!"):
+        if self.op == "!":
             return Number(not expr)
 
 
@@ -180,25 +179,56 @@ def my_tests():
     print("Write x:", end=' ')
     Read("x").evaluate(global_scope)
     global_scope["foo"] = Function(["a", "b", "c"],
-                                   [BinaryOperation(BinaryOperation(Reference("a"), "+", Reference("b")), "*", Reference("c"))])
+                                   [BinaryOperation(BinaryOperation(
+                                                    Reference("a"),
+                                                    "+",
+                                                    Reference("b")),
+                                                    "*",
+                                                    Reference("c"))])
     Reference_to_foo = FunctionDefinition("foo", global_scope["foo"])
-    global_scope["abs"] = Function(["x"], [
-                                            Conditional(
-                                                BinaryOperation(Reference("x"), "<", Number(0)), [UnaryOperation("-", Reference("x"))], [Reference("x")])
-                                          ])
+    global_scope["abs"] = Function(["x"],
+                                   [
+                                   Conditional(
+                                    BinaryOperation(Reference("x"),
+                                                    "<",
+                                                    Number(0)),
+                                    [UnaryOperation("-",
+                                                    Reference("x"))],
+                                    [Reference("x")])
+                                   ])
     Reference_to_abs = FunctionDefinition("abs", global_scope["abs"])
 
     x = Reference("x").evaluate(global_scope).value
 
-    if (abs(x) % 2 == 1):
-        print("It should print", (abs(Reference("x").evaluate(global_scope).value) + 1) * (abs(Reference("x").evaluate(global_scope).value) + 1), ": ", end=' ')
+    if abs(x) % 2 == 1:
+        print("It should print",
+              (abs(Reference("x").evaluate(global_scope).value) + 1) *
+              (abs(Reference("x").evaluate(global_scope).value) + 1),
+              ": ",
+              end=' ')
     else:
         print("It should print", x, ":", end=' ')
 
     Conditional(
-        UnaryOperation("!", BinaryOperation(BinaryOperation(BinaryOperation(Reference("x"), "/", Number(2)), "*", Number(2)), "==", Reference("x"))),
+        UnaryOperation("!",
+                       BinaryOperation(BinaryOperation(
+                                       BinaryOperation(Reference("x"),
+                                                       "/",
+                                                       Number(2)),
+                                       "*",
+                                       Number(2)),
+                                       "==",
+                                       Reference("x"))),
         [
-            Print(FunctionCall(Reference_to_foo, [FunctionCall(Reference_to_abs, [Reference("x")]), Number(1), BinaryOperation(FunctionCall(Reference_to_abs, [Reference("x")]), "+", Number(1))]))
+            Print(FunctionCall(Reference_to_foo,
+                               [FunctionCall(Reference_to_abs,
+                                             [Reference("x")]),
+                                Number(1),
+                                BinaryOperation(
+                                             FunctionCall(Reference_to_abs,
+                                                          [Reference("x")]),
+                                             "+",
+                                             Number(1))]))
         ],
         [
             Print(Reference("x"))

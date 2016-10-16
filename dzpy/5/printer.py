@@ -54,12 +54,12 @@ class PrettyPrinter:
 
     def visitFunctionCall(self, FunctionCall):
         print(FunctionCall.fun_expr.name + "(", end='')
-        sep = False
+        delimiter = False
         for arg in FunctionCall.args:
-            if sep:
+            if delimiter:
                 print(", ", end='')
             else:
-                sep = True
+                delimiter = True
             self.visit(arg, False)
         print(")", end="")
 
@@ -73,9 +73,9 @@ class PrettyPrinter:
         self.visit(BinaryOperation.rhs, False)
         print(")", end='')
 
-    def visitUnaryOperation(self, unop):
-        print("(" + unop.op, end='')
-        self.visit(unop.expr, False)
+    def visitUnaryOperation(self, UnaryOperation):
+        print("(" + UnaryOperation.op, end='')
+        self.visit(UnaryOperation.expr, False)
         print(")", end='')
 
 

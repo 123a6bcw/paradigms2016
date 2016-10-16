@@ -1,5 +1,5 @@
-from model import *
-from printer import *
+from yat.model import *
+from yat.printer import *
 
 
 class ConstantFolder:
@@ -9,73 +9,73 @@ class ConstantFolder:
     def visit(self, tree):
         return getattr(self, 'visit' + tree.__class__.__name__)(tree)
 
-    def visitNumber(self, Number):
-        return Number
+    def visitNumber(self, Num):
+        return Num
 
-    def visitFunction(self, Function):
-        for i, expr in enumerate(Function.body):
-            Function.body[i] = self.visit(expr)
-        return Function
+    def visitFunction(self, Func):
+        for i, expr in enumerate(Func.body):
+            Func.body[i] = self.visit(expr)
+        return Func
 
-    def visitFunctionDefinition(self, FunctionDefinition):
-        FunctionDefinition.function = self.visit(FunctionDefinition.function)
-        return FunctionDefinition
+    def visitFunctionDefinition(self, FuncDef):
+        FuncDef.function = self.visit(FuncDef.function)
+        return FuncDef
 
-    def visitConditional(self, Conditional):
-        Conditional.condition = self.visit(Conditional.condition)
-        for i, expr in enumerate(Conditional.if_true):
-            Conditional.if_true[i] = self.visit(expr)
-        if Conditional.if_false:
-            for i, expr in enumerate(Conditional.if_false):
-                Conditional.if_false[i] = self.visit(expr)
-        return Conditional
+    def visitConditional(self, Cond):
+        Cond.condition = self.visit(Cond.condition)
+        for i, expr in enumerate(Cond.if_true):
+            Cond.if_true[i] = self.visit(expr)
+        if Cond.if_false is not None:
+            for i, expr in enumerate(Cond.if_false):
+                Cond.if_false[i] = self.visit(expr)
+        return Cond
 
-    def visitPrint(self, Print):
-        Print.expr = self.visit(Print.expr)
-        return Print
+    def visitPrint(self, P):
+        P.expr = self.visit(P.expr)
+        return P
 
-    def visitRead(self, Read):
-        return Read
+    def visitRead(self, R):
+        return R
 
-    def visitFunctionCall(self, FunctionCall):
-        for i, arg in enumerate(FunctionCall.args):
-            FunctionCall.args[i] = self.visit(arg)
-        return FunctionCall
+    def visitFunctionCall(self, FuncCall):
+        for i, arg in enumerate(FuncCall.args):
+            FuncCall.args[i] = self.visit(arg)
+        return FuncCall
 
-    def visitReference(self, Reference):
-        return Reference
+    def visitReference(self, Ref):
+        return Ref
 
-    def visitBinaryOperation(self, BinaryOperation):
-        BinaryOperation.lhs = self.visit(BinaryOperation.lhs)
-        BinaryOperation.rhs = self.visit(BinaryOperation.rhs)
-        if isinstance(BinaryOperation.lhs,
-                      Number) and isinstance(BinaryOperation.rhs,
+    def visitBinaryOperation(self, BinOp):
+        BinOp.lhs = self.visit(BinOp.lhs)
+        BinOp.rhs = self.visit(BinOp.rhs)
+        if isinstance(BinOp.lhs,
+                      Number) and isinstance(BinOp.rhs,
                                              Number):
-            return BinaryOperation.evaluate(...)
-        if BinaryOperation.op == '*':
-            if isinstance(BinaryOperation.lhs, Number)
-            and BinaryOperation.lhs.value == 0
-            and isinstance(BinaryOperation.rhs, Reference):
+            return BinOp.evaluate(...)
+        if BinOp.op == '*':
+            if (isinstance(BinOp.lhs, Number) and
+               BinOp.lhs.value == 0 and
+               isinstance(BinOp.rhs, Reference)):
                 return Number(0)
 
-            if isinstance(BinaryOperation.lhs, Reference)
-            and isinstance(BinaryOperation.rhs, Number)
-            and BinaryOperation.rhs.value == 0:
+            if (isinstance(BinOp.lhs, Reference) and
+               isinstance(BinOp.rhs, Number) and
+               BinOp.rhs.value == 0):
                 return Number(0)
 
-        if BinaryOperation.op == '-'
-        and isinstance(BinaryOperation.lhs, Reference)
-        and isinstance(BinaryOperation.rhs, Reference)
-        and BinaryOperation.lhs.name == BinaryOperation.rhs.name:
+        if (BinOp.op == '-' and
+           isinstance(BinOp.lhs, Reference) and
+           isinstance(BinOp.rhs, Reference) and
+           BinOp.lhs.name == BinOp.rhs.name):
             return Number(0)
 
-        return BinaryOperation
+        return BinOp
 
-    def visitUnaryOperation(self, UnaryOperation):
-        UnaryOperation.expr = self.visit(UnaryOperation.expr)
-        if isinstance(UnaryOperation.expr, Number):
-            return UnaryOperation.evaluate(...)
-        return UnaryOperation
+    def visitUnaryOperation(self, UnOp):
+        UnOp.expr = self.visit(UnOp.expr)
+        if isinstance(UnOp.expr, Number):
+            return UnOp.evaluate(...)
+        return UnOp
 
 
 def folder_my_tests():

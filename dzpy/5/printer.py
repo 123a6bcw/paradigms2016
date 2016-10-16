@@ -1,4 +1,4 @@
-from model import *
+from yat.model import *
 
 
 class PrettyPrinter:
@@ -14,48 +14,48 @@ class PrettyPrinter:
         if sentence:
             print(";")
 
-    def visitNumber(self, Number):
-        print(Number.value, end='')
+    def visitNumber(self, NumberObject):
+        print(NumberObject.value, end='')
 
-    def visitFunction(self, Function):
-        print("(" + ", ".join(Function.args)+")\n" + self.tab*self.level + "{")
+    def visitFunction(self, Func):
+        print("(" + ", ".join(Func.args)+")\n" + self.tab*self.level + "{")
         self.level += 1
-        for expr in Function.body:
+        for expr in Func.body:
             self.visit(expr, True)
         self.level -= 1
         print(self.tab*self.level + "}", end='')
 
-    def visitFunctionDefinition(self, FunctionDefinition):
-        print("def " + FunctionDefinition.name, end='')
-        self.visit(FunctionDefinition.function, False)
+    def visitFunctionDefinition(self, Func):
+        print("def " + Func.name, end='')
+        self.visit(Func.function, False)
 
-    def visitConditional(self, Conditional):
+    def visitConditional(self, Cond):
         print("if (", end='')
-        self.visit(Conditional.condition, False)
+        self.visit(Cond.condition, False)
         print(")\n" + self.tab * self.level + "{")
         self.level += 1
-        for expr in Conditional.if_true:
+        for expr in Cond.if_true:
             self.visit(expr, True)
         self.level -= 1
-        if Conditional.if_false:
+        if Cond.if_false is not None:
             print(self.tab*self.level + "} else\n" + self.tab*self.level + "{")
             self.level += 1
-            for expr in Conditional.if_false:
+            for expr in Cond.if_false:
                 self.visit(expr, True)
             self.level -= 1
         print(self.tab * self.level + "}", end='')
 
-    def visitPrint(self, Print):
+    def visitPrint(self, P):
         print("print ", end='')
-        self.visit(Print.expr, False)
+        self.visit(P.expr, False)
 
-    def visitRead(self, Read):
-        print("read " + Read.name, end='')
+    def visitRead(self, R):
+        print("read " + R.name, end='')
 
-    def visitFunctionCall(self, FunctionCall):
-        print(FunctionCall.fun_expr.name + "(", end='')
+    def visitFunctionCall(self, FuncCall):
+        print(FuncCall.fun_expr.name + "(", end='')
         delimiter = False
-        for arg in FunctionCall.args:
+        for arg in FuncCall.args:
             if delimiter:
                 print(", ", end='')
             else:
@@ -63,19 +63,19 @@ class PrettyPrinter:
             self.visit(arg, False)
         print(")", end="")
 
-    def visitReference(self, Reference):
-        print(Reference.name, end='')
+    def visitReference(self, Ref):
+        print(Ref.name, end='')
 
-    def visitBinaryOperation(self, BinaryOperation):
+    def visitBinaryOperation(self, BinOp):
         print("(", end='')
-        self.visit(BinaryOperation.lhs, False)
-        print(" " + BinaryOperation.op + " ", end='')
-        self.visit(BinaryOperation.rhs, False)
+        self.visit(BinOp.lhs, False)
+        print(" " + BinOp.op + " ", end='')
+        self.visit(BinOp.rhs, False)
         print(")", end='')
 
-    def visitUnaryOperation(self, UnaryOperation):
-        print("(" + UnaryOperation.op, end='')
-        self.visit(UnaryOperation.expr, False)
+    def visitUnaryOperation(self, UnOp):
+        print("(" + UnOp.op, end='')
+        self.visit(UnOp.expr, False)
         print(")", end='')
 
 
@@ -127,7 +127,6 @@ def printer_my_tests():
                                              Number(1))]))
         ],
         [
-            Print(Reference("x"))
         ]))
 
 

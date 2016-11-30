@@ -5,5 +5,4 @@
 
 
 ##### PRIVET!!))
-- [ ] get rid of hard-coded 512 alignment in error checking
 

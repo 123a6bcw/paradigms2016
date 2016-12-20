@@ -56,6 +56,4 @@ void thpool_init(struct ThreadPool* pool, size_t n_pools);
 void thpool_submit(struct ThreadPool* pool, struct Task* task);
 void thpool_wait(struct Task* task);
 void thpool_finit(struct ThreadPool* pool);
-
-void sorting(void *arg);
 #endif

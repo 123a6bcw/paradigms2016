@@ -1,5 +1,58 @@
 #include "../include/thread_pool.h"
 
+int comp(const void* a, const void* b)
+{
+    return (*(int*)a - *(int*)b);
+}
+
+void sorting(void* arg)
+{
+    int* a;
+    int x;
+    int i, j;
+    
+    struct Task* t1 = NULL;
+    struct Task* t2 = NULL;
+    
+    struct SortTask* sort_task = arg;
+    
+    if (sort_task->len <= 1)
+    {
+        return;
+    }
+    
+    if (sort_task->steps_down == 0)
+    {
+        qsort(sort_task->a, sort_task->len, sizeof(int), comp);
+        return;
+    }
+    
+    a = sort_task->a;
+    x = a[(sort_task->len) / 2];
+    i = 0; 
+    j = sort_task->len - 1;
+    while (i <= j)
+    {
+        while (a[i] < x) i++;
+        while (a[j] > x) j--;
+        if (i <= j)
+        {
+            int swap = a[i];
+            a[i] = a[j];
+            a[j] = swap;
+            i++;
+            j--;
+        }
+    }
+    
+    task_init(&t1, a, j + 1, sort_task->steps_down - 1, sorting, sort_task->task->pool);
+    task_init(&t2, a + i, sort_task->len - i, sort_task->steps_down - 1, sorting, sort_task->task->pool);
+    sort_task->task->l = t1;
+    sort_task->task->r = t2;
+    thpool_submit(sort_task->task->pool, t1);
+    thpool_submit(sort_task->task->pool, t2);
+}
+
 void wait_sort(struct ThreadPool* pool, struct Task* task)
 {
     if (task == NULL)

@@ -134,25 +134,29 @@ class BinaryOperationTest(unittest.TestCase):
         test_lhs = 42
         test_rhs = 322
         for test_operation, test_function in self.operations.items():
-            test_result = BinaryOperation(
-                                         Number(test_lhs),
-                                         test_operation,
-                                         Number(test_rhs)).evaluate(self.scope)
-            self.assertEqual(test_function(test_lhs, test_rhs),
-                             test_result.value)
+            with patch('sys.stdout', new_callable=StringIO) as stdout:
+                test_result = BinaryOperation(
+                                             Number(test_lhs),
+                                             test_operation,
+                                             Number(test_rhs)).evaluate(self.scope)
+                Print(test_result).evaluate(self.scope)
+                self.assertEqual(test_function(test_lhs, test_rhs),
+                                 int(stdout.getvalue()))
 
     def test_expected_logic_result(self):
         test_lhs = 42
         test_rhs = 322
         for test_operation, test_function in self.logic_operations.items():
-            test_result = BinaryOperation(
-                                         Number(test_lhs),
-                                         test_operation,
-                                         Number(test_rhs)).evaluate(self.scope)
-            if (test_function(test_lhs, test_rhs)):
-                self.assertTrue(test_result.value)
-            else:
-                self.assertFalse(test_result.value)
+            with patch('sys.stdout', new_callable=StringIO) as stdout:
+                test_result = BinaryOperation(
+                                             Number(test_lhs),
+                                             test_operation,
+                                             Number(test_rhs)).evaluate(self.scope)
+                Print(test_result).evaluate(self.scope)
+                if (test_function(test_lhs, test_rhs)):
+                    self.assertNotEqual(int(stdout.getvalue()), 0)
+                else:
+                    self.assertEqual(int(stdout.getvalue()), 0)
 
 
 class UnaryOperationTest(unittest.TestCase):
@@ -160,16 +164,23 @@ class UnaryOperationTest(unittest.TestCase):
         self.scope = Scope()
 
     def test_expected_neg_result(self):
-        test_value = 42
-        test_result = UnaryOperation("-",
-                                     Number(test_value)).evaluate(self.scope)
-        self.assertEqual(test_result.value, neg(test_value))
+        with patch('sys.stdout', new_callable=StringIO) as stdout:
+            test_value = 42
+            test_result = UnaryOperation("-",
+                                         Number(test_value)).evaluate(self.scope)
+            Print(test_result).evaluate(self.scope)
+            self.assertEqual(int(stdout.getvalue()), neg(test_value))
 
     def test_expected_not_result(self):
-        test_value = 42
-        test_result = UnaryOperation("!",
-                                     Number(test_value)).evaluate(self.scope)
-        self.assertEqual(test_result.value, not_(test_result))
+        with patch('sys.stdout', new_callable=StringIO) as stdout:
+            test_value = 42
+            test_result = UnaryOperation("!",
+                                         Number(test_value)).evaluate(self.scope)
+            Print(test_result).evaluate(self.scope)
+            if (not_(test_value)):
+                self.assertNotEqual(int(stdout.getvalue()), 0)
+            else:
+                self.assertEqual(int(stdout.getvalue()), 0)
 
 
 if __name__ == '__main__':

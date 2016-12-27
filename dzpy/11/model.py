@@ -72,7 +72,7 @@ class Print:
 
     def evaluate(self, scope):
         expr = self.expr.evaluate(scope).value
-        print(expr)
+        print(int(expr))
         return expr
 
 

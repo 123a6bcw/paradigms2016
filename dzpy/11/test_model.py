@@ -51,7 +51,9 @@ class ConditionalTest(unittest.TestCase):
 
     def test_empty(self):
         Conditional(Number(0), [], []).evaluate(self.scope)
+        Conditional(Number(0), []).evaluate(self.scope)
         Conditional(Number(1), [], []).evaluate(self.scope)
+        Conditional(Number(1), []).evaluate(self.scope)
 
     def test_expected_behaviour(self):
         test_true_number = Number(1)
